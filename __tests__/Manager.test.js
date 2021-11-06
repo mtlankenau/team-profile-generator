@@ -17,6 +17,11 @@ test("checks for Manager's email property", () => {
   expect(manager.email).toBe('tiffanythemanager@gmail.com');
 })
 
+test("checks for Manager's officeNumber property", () => {
+  const manager = new Manager('Tiffany', '10101', 'tiffanythemanager@gmail.com', '115');
+  expect(manager.officeNumber).toBe('115');
+})
+
 // tests that check for values returned from object methods
 test("checks for Manager's name that is returned using the getName() method", () => {
   const name = new Manager('Tiffany');
@@ -25,12 +30,17 @@ test("checks for Manager's name that is returned using the getName() method", ()
 
 test("checks for Manager's id that is returned using the getId() method", () => {
   const id = new Manager('Tiffany', '10101');
-  expect(id.getId()).toBe('ID: 10101');
+  expect(id.getId()).toBe('10101');
 })
 
 test("checks for Manager's email that is returned using the getEmail() method", () => {
   const email = new Manager('Tiffany', '10101', 'tiffanythemanager@gmail.com');
-  expect(email.getEmail()).toBe('Email: tiffanythemanager@gmail.com');
+  expect(email.getEmail()).toBe('tiffanythemanager@gmail.com');
+})
+
+test("checks for Manager's office number that is returned using the getOfficeNumber() method", () => {
+  const officeNumber = new Manager('Tiffany', '10101', 'tiffanythemanager@gmail.com', '115');
+  expect(officeNumber.getOfficeNumber()).toBe('115');
 })
 
 test("checks for Manager's role that is returned using the getRole() method", () => {

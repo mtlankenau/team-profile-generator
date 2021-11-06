@@ -30,17 +30,17 @@ test("checks for Engineer's name that is returned using the getName() method", (
 
 test("checks for Engineer's id that is returned using the getId() method", () => {
   const id = new Engineer('Frank', '703715');
-  expect(id.getId()).toBe('ID: 703715');
+  expect(id.getId()).toBe('703715');
 })
 
 test("checks for Engineer's email that is returned using the getEmail() method", () => {
   const email = new Engineer('Frank', '703715', 'franktheengineer@gmail.com');
-  expect(email.getEmail()).toBe('Email: franktheengineer@gmail.com');
+  expect(email.getEmail()).toBe('franktheengineer@gmail.com');
 })
 
 test("checks for Engineer's github that is returned using the getGithub() method", () => {
   const github = new Engineer('Frank', '703715', 'franktheengineer@gmail.com', 'frankgithub');
-  expect(github.getGithub()).toBe('Github: frankgithub');
+  expect(github.getGithub()).toBe('frankgithub');
 })
 
 test("checks for Engineer's role that is returned using the getRole() method", () => {

@@ -25,12 +25,12 @@ test("checks for Employee's name that is returned using the getName() method", (
 
 test("checks for Employee's id that is returned using the getId() method", () => {
   const id = new Employee('Mike', '392503');
-  expect(id.getId()).toBe('ID: 392503');
+  expect(id.getId()).toBe('392503');
 })
 
 test("checks for Employee's email that is returned using the getEmail() method", () => {
   const email = new Employee('Mike', '392503', 'mtlankenau@gmail.com');
-  expect(email.getEmail()).toBe('Email: mtlankenau@gmail.com');
+  expect(email.getEmail()).toBe('mtlankenau@gmail.com');
 })
 
 test("checks for Employee's role that is returned using the getRole() method", () => {

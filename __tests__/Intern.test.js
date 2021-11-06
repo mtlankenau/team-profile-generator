@@ -30,17 +30,17 @@ test("checks for Intern's name that is returned using the getName() method", () 
 
 test("checks for Intern's id that is returned using the getId() method", () => {
   const id = new Intern('Winston', '389120');
-  expect(id.getId()).toBe('ID: 389120');
+  expect(id.getId()).toBe('389120');
 })
 
 test("checks for Intern's email that is returned using the getEmail() method", () => {
   const email = new Intern('Winston', '389120', 'winstontheintern@gmail.com');
-  expect(email.getEmail()).toBe('Email: winstontheintern@gmail.com');
+  expect(email.getEmail()).toBe('winstontheintern@gmail.com');
 })
 
 test("checks for Intern's school that is returned using the getSchool() method", () => {
   const school = new Intern('Winston', '389120', 'winstontheintern@gmail.com', 'University of Coding');
-  expect(school.getSchool()).toBe('School: University of Coding');
+  expect(school.getSchool()).toBe('University of Coding');
 })
 
 test("checks for Intern's role that is returned using the getRole() method", () => {

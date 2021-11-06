@@ -1,7 +1,21 @@
+// imported classes
+const Manager = require('./lib/Manager');
+const Engineer = require('./lib/Engineer');
+const Intern = require('./lib/Intern');
+
+//imported modules
+const fs = require('fs');
 const inquirer = require('inquirer');
+
+// imported file for generating HTML template
+const render = require('./src/page-template');
+
+// global array
 const team = [];
 
-const promptUser = () => {
+// first function to run upon entering 'node index.js' in terminal. 
+// inquirer asks users for information about manager.
+const promptManager = () => {
   return inquirer.prompt([
     {
       type: 'text',
@@ -26,41 +40,48 @@ const promptUser = () => {
   ])
 };
 
+// function designated to handle 
+const handleNewUsers = () => {
+  promptMemberChoice()
+    .then(newMember => {
+      if (newMember.selection === 'Engineer' || newMember.selection === 'Intern') {
+        return promptNewTeamMember(newMember);
+      } else {
+        console.log(team);
+        return buildTeam();
+      }
+    })
+    .then(newTeamMember => {
+      if (!newTeamMember) {
+        console.log("Team build complete! Please view the 'index.html' file in the 'dist/' folder for the finished webpage!");
+        return;
+      } else if (newTeamMember.engineerGithub) {
+        const newEngineer = new Engineer(newTeamMember.engineerName, newTeamMember.engineerId, newTeamMember.engineerEmail, newTeamMember.engineerGithub);
+        console.log(newEngineer);
+        team.push(newEngineer);
+        return handleNewUsers();
+      } else if (newTeamMember.internSchool) {
+        const newIntern = new Intern(newTeamMember.internName, newTeamMember.internId, newTeamMember.internEmail, newTeamMember.internSchool);
+        console.log(newIntern);
+        team.push(newIntern);
+        return handleNewUsers();
+      }
+    })
+}
+
 const promptMemberChoice = () => {
   return inquirer.prompt([
     {
       type: 'list',
-      name: 'confirmTeam',
+      name: 'selection',
       message: 'Would you like to add more members to your team?',
       choices: ['Engineer', 'Intern', "No, I'm finished building my team"]
     }
   ])
 }
 
-const handleNewUsers = () => {
-  promptMemberChoice()
-    .then(newMember => {
-      console.log(newMember);
-      if (newMember.confirmTeam === 'Engineer' || newMember.confirmTeam === 'Intern') {
-        return promptNewTeamMember(newMember);
-      } else {
-        return console.log(team);
-      }
-    })
-    .then(newTeamMember => {
-      if (!newTeamMember) {
-        console.log('No new member exists');
-        return;
-      } else {
-        team.push(newTeamMember);
-        return handleNewUsers();
-      }
-    })
-}
-
-
 const promptNewTeamMember = choice => {
-  if (choice.confirmTeam === 'Engineer') {
+  if (choice.selection === 'Engineer') {
     console.log(`
 ================
 Add New Engineer
@@ -74,7 +95,7 @@ Add New Engineer
       },
       {
         type: 'text',
-        name: 'enginnerId',
+        name: 'engineerId',
         message: "Please enter the Engineer's Employee ID:"
       },
       {
@@ -88,7 +109,7 @@ Add New Engineer
         message: "Please enter the Engineer's github username:"
       }
     ])
-  } else if (choice.confirmTeam === 'Intern') {
+  } else if (choice.selection === 'Intern') {
     console.log(`
 ==============
 Add New Intern
@@ -121,97 +142,19 @@ Add New Intern
   }
 }
 
-const generateTemplateHTML = teamMembersArray => {
-  const templateHTML = 
-`
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-  <header>
-    <h1>My Team</h1>
-  </header>
-  <section>
-    ${generateManager(teamMembersArray[0])}
-  </section>
-</body>
-</html>
-
-`
+const buildTeam = () => {
+  fs.writeFileSync('./dist/index.html', render(team), 'utf-8');
 }
 
-// const confirmTeamBuild = () => {
-//   console.log(`
-// =======================
-// Team Build Confirmation
-// =======================
-// `)
-//   return inquirer.prompt([
-//     {
-//       type: 'confirm',
-//       name: 'confirmFinish',
-//       message: 'Are you now finished with building your team?',
-//       deafult: false
-//     },
-//     {
-//       type: 'list',
-//       name: 'newTeamMember',
-//       message: 'Please add another team member:',
-//       choices: ['Engineer', 'Intern'],
-//       when: ({ confirmFinish }) => {
-//         if (confirmFinish === true) {
-//           return false;
-//         } else {
-//           return true;
-//         }
-//       }
-//     }
-//   ])
-// }
-
-promptUser()
+promptManager()
   .then(manager => {
-    team.push(manager);
-    return manager;
+    const newManager = new Manager(manager.managerName, manager.managerId, manager.managerEmail, manager.managerOffice);
+    console.log(newManager);
+    team.push(newManager);
   })
   .then(() => {
     return handleNewUsers();
   })
-  .then(() => {
-    return generateTemplateHTML(team);
-  })
-  // .then(newMember => {
-  //   console.log(newMember);
-  //   if (newMember.confirmTeam === 'Engineer' || newMember.confirmTeam === 'Intern') {
-  //     return promptNewTeamMember(newMember);
-  //   } else {
-  //     return;
-  //   }
-  // })
-  // .then(newTeamMember => {
-  //   // console.log(newTeamMember);
-  //   // console.log(team);
-  //   if (!newTeamMember) {
-  //     console.log('No new member exists');
-  //     return;
-  //   } else {
-  //     team.push(newTeamMember);
-  //     return promptMemberChoice();
-  //   }
-  // })
-  // .then(confirmTeamBuild)
-  // .then(confirmTeamBuildResponse => {
-  //   for (let i = 0; i < team.length; i++) {
-  //     if (confirmTeamBuildResponse.confirmFinish === false) {
-  //       return promptNewTeamMember(confirmTeamBuildResponse);
-  //     }
-  //   }
-  // })
   .catch(err => {
     console.log(err);
   });
