@@ -1,4 +1,5 @@
 const inquirer = require('inquirer');
+const team = [];
 
 const promptUser = () => {
   return inquirer.prompt([
@@ -21,31 +22,45 @@ const promptUser = () => {
       type: 'text',
       name: 'managerOffice',
       message: "Please enter the Team Manager's office number:"
-    },
-    {
-      type: 'confirm',
-      name: 'confirmTeam',
-      message: 'Would you like to add more members to your team?',
-      deafult: true
-    },
-    {
-      type: 'list',
-      name: 'newTeamMember',
-      message: 'Please add another team member:',
-      choices: ['Engineer', 'Intern'],
-      when: ({ confirmTeam }) => {
-        if (confirmTeam === true) {
-          return true;
-        } else {
-          return false;
-        }
-      }
     }
   ])
 };
 
-const promptNewTeamMember = teamMember => {
-  if (teamMember === 'Engineer') {
+const promptMemberChoice = () => {
+  return inquirer.prompt([
+    {
+      type: 'list',
+      name: 'confirmTeam',
+      message: 'Would you like to add more members to your team?',
+      choices: ['Engineer', 'Intern', "No, I'm finished building my team"]
+    }
+  ])
+}
+
+const handleNewUsers = () => {
+  promptMemberChoice()
+    .then(newMember => {
+      console.log(newMember);
+      if (newMember.confirmTeam === 'Engineer' || newMember.confirmTeam === 'Intern') {
+        return promptNewTeamMember(newMember);
+      } else {
+        return console.log(team);
+      }
+    })
+    .then(newTeamMember => {
+      if (!newTeamMember) {
+        console.log('No new member exists');
+        return;
+      } else {
+        team.push(newTeamMember);
+        return handleNewUsers();
+      }
+    })
+}
+
+
+const promptNewTeamMember = choice => {
+  if (choice.confirmTeam === 'Engineer') {
     console.log(`
 ================
 Add New Engineer
@@ -73,7 +88,7 @@ Add New Engineer
         message: "Please enter the Engineer's github username:"
       }
     ])
-  } else if (teamMember === 'Intern') {
+  } else if (choice.confirmTeam === 'Intern') {
     console.log(`
 ==============
 Add New Intern
@@ -101,55 +116,78 @@ Add New Intern
         message: "Please enter the Intern's school:"
       }
     ])
-  } 
+  } else {
+    return;
+  }
 }
 
-const confirmTeamBuild = () => {
-  console.log(`
-=======================
-Team Build Confirmation
-=======================
-`)
-  return inquirer.prompt([
-    {
-      type: 'confirm',
-      name: 'confirmFinish',
-      message: 'Are you now finished with building your team?',
-      deafult: false
-    },
-    {
-      type: 'list',
-      name: 'newTeamMember',
-      message: 'Please add another team member:',
-      choices: ['Engineer', 'Intern'],
-      when: ({ confirmFinish }) => {
-        if (confirmFinish === true) {
-          return false;
-        } else {
-          return true;
-        }
-      }
-    }
-  ])
-}
+// const confirmTeamBuild = () => {
+//   console.log(`
+// =======================
+// Team Build Confirmation
+// =======================
+// `)
+//   return inquirer.prompt([
+//     {
+//       type: 'confirm',
+//       name: 'confirmFinish',
+//       message: 'Are you now finished with building your team?',
+//       deafult: false
+//     },
+//     {
+//       type: 'list',
+//       name: 'newTeamMember',
+//       message: 'Please add another team member:',
+//       choices: ['Engineer', 'Intern'],
+//       when: ({ confirmFinish }) => {
+//         if (confirmFinish === true) {
+//           return false;
+//         } else {
+//           return true;
+//         }
+//       }
+//     }
+//   ])
+// }
 
 promptUser()
   .then(manager => {
-    console.log(manager);
-    console.log(manager.newTeamMember);
-    return manager.newTeamMember;
+    team.push(manager);
+    return manager;
   })
-  .then(promptNewTeamMember)
-  .then(newTeamMember => {
-    console.log(newTeamMember);
-    return newTeamMember;
+  .then(() => {
+    return handleNewUsers();
   })
-  .then(confirmTeamBuild)
-  .then(confirmTeamBuildResponse => {
-    if (confirmTeamBuildResponse.confirmFinish === false) {
-      promptNewTeamMember(confirmTeamBuildResponse.newTeamMember);
-    }
+  .then(() => {
+    return generateHTML(team);
   })
+  // .then(newMember => {
+  //   console.log(newMember);
+  //   if (newMember.confirmTeam === 'Engineer' || newMember.confirmTeam === 'Intern') {
+  //     return promptNewTeamMember(newMember);
+  //   } else {
+  //     return;
+  //   }
+  // })
+  // .then(newTeamMember => {
+  //   // console.log(newTeamMember);
+  //   // console.log(team);
+  //   if (!newTeamMember) {
+  //     console.log('No new member exists');
+  //     return;
+  //   } else {
+  //     team.push(newTeamMember);
+  //     return promptMemberChoice();
+  //   }
+  // })
+  // .then(confirmTeamBuild)
+  // .then(confirmTeamBuildResponse => {
+  //   for (let i = 0; i < team.length; i++) {
+  //     if (confirmTeamBuildResponse.confirmFinish === false) {
+  //       return promptNewTeamMember(confirmTeamBuildResponse);
+  //     }
+  //   }
+  // })
   .catch(err => {
     console.log(err);
   });
