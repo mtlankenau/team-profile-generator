@@ -40,7 +40,6 @@ const promptManager = () => {
   ])
 };
 
-// function designated to handle 
 const handleNewUsers = () => {
   promptMemberChoice()
     .then(newMember => {
